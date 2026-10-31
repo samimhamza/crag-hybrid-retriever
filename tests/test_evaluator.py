@@ -27,3 +27,4 @@ def test_retrieval_evaluator_metrics():
     # Hit rate = 1.0
     assert metrics.hit_rate == 1.0
     assert metrics.ndcg_at_k > 0.0
+

@@ -76,3 +76,4 @@ class ReciprocalRankFusion:
             k_rrf=self.k_rrf,
             top_k=top_k,
         )
+

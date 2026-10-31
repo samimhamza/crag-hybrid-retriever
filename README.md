@@ -64,20 +64,33 @@ flowchart TD
 
 ---
 
-## 📦 Installation
+## 📦 Installation & Fast Setup (`uv` or `pip`)
 
-```bash
-# Minimal installation (BM25, RRF, CRAG loop, in-memory embeddings)
-pip install crag-hybrid-retriever
+### Option A: Ultra-Fast Setup with `uv` (Recommended)
 
-# With neural cross-encoders and dense model support
-pip install "crag-hybrid-retriever[dense]"
-```
+This repository includes a deterministic `uv.lock` for lightning-fast virtual environment creation:
 
-For local development and testing:
 ```bash
 git clone https://github.com/your-username/crag-hybrid-retriever.git
 cd crag-hybrid-retriever
+
+# Sync dependencies and create .venv in under 2 seconds
+uv sync --extra dev
+
+# Run unit tests immediately with zero manual activation
+uv run pytest -v
+
+# Run the interactive hybrid demo
+uv run python examples/quickstart_hybrid.py
+```
+
+### Option B: Standard `pip`
+
+```bash
+# Minimal installation
+pip install crag-hybrid-retriever
+
+# With neural cross-encoders and dev tools
 pip install -e ".[dev]"
 ```
 
@@ -168,16 +181,20 @@ print(f"NDCG@5:      {metrics.ndcg_at_k:.4f}")
 
 ## 🛠️ Testing & Quality Assurance
 
-Run the test suite with `pytest`:
+Run the complete test suite with `uv` or `pytest`:
 
 ```bash
+# Using uv (no virtualenv activation required)
+uv run pytest -v
+
+# Or using standard pytest
 pytest -v
 ```
 
-Linting and type checking:
+Linting and strict type checking:
 ```bash
-ruff check .
-mypy src
+uv run ruff check .
+uv run mypy src
 ```
 
 ---

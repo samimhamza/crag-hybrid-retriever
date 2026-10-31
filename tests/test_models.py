@@ -37,3 +37,4 @@ def test_crag_feedback():
     )
     assert feedback.action == CRAGAction.CORRECT
     assert feedback.confidence_score == 0.92
+

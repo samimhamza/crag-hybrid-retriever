@@ -23,3 +23,4 @@ def test_bm25_retriever():
     assert len(results) > 0
     assert results[0].chunk.document_id == "doc-2"
     assert results[0].rank == 1
+

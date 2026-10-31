@@ -119,3 +119,4 @@ class FlashRankReranker(BaseReranker):
             r.rank = rank
 
         return scored
+

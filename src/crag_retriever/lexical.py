@@ -84,3 +84,4 @@ class BM25Retriever(BaseRetriever):
             rank += 1
 
         return results
+

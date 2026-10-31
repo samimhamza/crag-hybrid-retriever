@@ -18,3 +18,4 @@ def test_crag_retrieval_and_reflection():
     assert feedback is not None
     assert feedback.confidence_score > 0.0
     assert len(history) >= 1
+

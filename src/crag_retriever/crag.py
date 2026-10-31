@@ -201,3 +201,4 @@ class CorrectiveRetriever:
             return query
         aspects_str = " ".join(missing_aspects[:3])
         return f"{query} {aspects_str}".strip()
+

@@ -99,3 +99,4 @@ class InMemoryDenseRetriever(BaseRetriever):
             )
 
         return results
+

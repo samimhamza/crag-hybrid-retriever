@@ -29,3 +29,4 @@ def test_in_memory_dense_retriever():
     results = retriever.retrieve("transformers for natural language", top_k=2)
     assert len(results) == 2
     assert results[0].chunk.document_id == "doc-a"
+

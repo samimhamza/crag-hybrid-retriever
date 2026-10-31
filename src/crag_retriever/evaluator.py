@@ -87,3 +87,4 @@ class RetrievalEvaluator:
             hit_rate=round(hit, 4),
             k=k,
         )
+

@@ -76,3 +76,4 @@ class EvaluationMetrics(BaseModel):
     ndcg_at_k: float = 0.0
     hit_rate: float = 0.0
     k: int = 5
+

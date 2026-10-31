@@ -36,3 +36,4 @@ class BaseReranker(ABC):
     ) -> List[RetrievalResult]:
         """Rerank candidates using cross-attention or neural score."""
         pass
+

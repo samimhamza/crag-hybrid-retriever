@@ -39,3 +39,4 @@ def test_fusion_class_wrapper():
     fused = rrf.fuse([res], top_k=1)
     assert len(fused) == 1
     assert fused[0].source == RetrievalSource.FUSION_RRF
+
