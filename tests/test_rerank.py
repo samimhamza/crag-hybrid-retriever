@@ -1,4 +1,3 @@
-import pytest
 from crag_retriever.models import Chunk, RetrievalResult
 from crag_retriever.rerank import FlashRankReranker
 
@@ -19,4 +18,3 @@ def test_flashrank_reranker_fallback():
     # c1 should be reranked to top because of exact token matching with query
     assert reranked[0].chunk.id == c1.id
     assert reranked[0].rank == 1
-

@@ -4,7 +4,7 @@ Reciprocal Rank Fusion (RRF) & Hybrid Candidate Fusion (`crag_retriever.fusion`)
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from crag_retriever.models import Chunk, RetrievalResult, RetrievalSource
 
@@ -19,14 +19,14 @@ def reciprocal_rank_fusion(
     """
     Fuse multiple ranked candidate lists using standard Reciprocal Rank Fusion (RRF):
         RRF_Score(d) = sum_{l in ranked_lists} ( 1.0 / (k_rrf + rank_l(d)) )
-    
+
     where rank_l(d) is 1-indexed (1, 2, 3, ...).
-    
+
     Args:
         ranked_lists: List of candidate result lists (e.g., [dense_results, bm25_results]).
         k_rrf: Smoothing constant (default 60, as established in Cormack et al.).
         top_k: Number of fused results to return. If None, returns all distinct candidates.
-    
+
     Returns:
         Sorted list of RetrievalResult objects with fused RRF scores.
     """
@@ -76,4 +76,3 @@ class ReciprocalRankFusion:
             k_rrf=self.k_rrf,
             top_k=top_k,
         )
-

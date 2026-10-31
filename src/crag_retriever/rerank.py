@@ -13,7 +13,7 @@ from crag_retriever.models import RetrievalResult, RetrievalSource
 class FlashRankReranker(BaseReranker):
     """
     High-speed, ONNX-accelerated Cross-Encoder reranker powered by FlashRank.
-    
+
     Supports multilingual models (e.g., `ms-marco-MultiBERT-L-12`) as well as
     ultra-fast English models (e.g., `ms-marco-MiniLM-L-12-v2`).
     """
@@ -31,11 +31,12 @@ class FlashRankReranker(BaseReranker):
         if self._ranker is None:
             try:
                 from flashrank import Ranker
+
                 kwargs = {"model_name": self.model_name}
                 if self.cache_dir:
                     kwargs["cache_dir"] = self.cache_dir
                 self._ranker = Ranker(**kwargs)
-            except Exception as e:
+            except Exception:
                 # Fallback to local heuristic reranker if FlashRank weights cannot be fetched
                 self._ranker = None
         return self._ranker
@@ -57,10 +58,7 @@ class FlashRankReranker(BaseReranker):
             try:
                 from flashrank import RerankRequest
 
-                passages = [
-                    {"id": c.chunk.id, "text": c.chunk.content}
-                    for c in candidates
-                ]
+                passages = [{"id": c.chunk.id, "text": c.chunk.content} for c in candidates]
                 request = RerankRequest(query=query, passages=passages)
                 reranked_raw = ranker.rerank(request)
 
@@ -119,4 +117,3 @@ class FlashRankReranker(BaseReranker):
             r.rank = rank
 
         return scored
-

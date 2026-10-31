@@ -58,7 +58,9 @@ def main():
     # 4. Evaluate against ground truth
     ground_truth_ids = {chunks[1].id}  # doc-1 is gRPC
     metrics = RetrievalEvaluator.evaluate(results, ground_truth_ids, k=2)
-    print(f"\nEvaluation Metrics: Precision@2={metrics.precision_at_k}, MRR={metrics.mrr}, NDCG@2={metrics.ndcg_at_k}")
+    print(
+        f"\nEvaluation Metrics: Precision@2={metrics.precision_at_k}, MRR={metrics.mrr}, NDCG@2={metrics.ndcg_at_k}"
+    )
 
 
 if __name__ == "__main__":

@@ -30,9 +30,9 @@ def deterministic_semantic_embedder(text: str, dim: int = 128) -> np.ndarray:
         for i in range(min(dim, len(digest))):
             vec[i] += float(digest[i] - 128) / 128.0
 
-    norm = np.linalg.norm(vec)
+    norm = float(np.linalg.norm(vec))
     if norm > 1e-9:
-        vec = vec / norm
+        vec = (vec / norm).astype(np.float32)
     return vec
 
 
@@ -49,7 +49,9 @@ class InMemoryDenseRetriever(BaseRetriever):
         dim: int = 128,
     ) -> None:
         self.dim = dim
-        self.embedder = embedder or (lambda text: deterministic_semantic_embedder(text, dim=self.dim))
+        self.embedder = embedder or (
+            lambda text: deterministic_semantic_embedder(text, dim=self.dim)
+        )
         self.chunks: List[Chunk] = []
         self._matrix: Optional[np.ndarray] = None
 
@@ -99,4 +101,3 @@ class InMemoryDenseRetriever(BaseRetriever):
             )
 
         return results
-

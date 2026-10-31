@@ -5,7 +5,7 @@ Core Data Models for CRAG & Hybrid Retrieval (`crag_retriever.models`).
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 
 class Document(BaseModel):
     """Container for an ingested document or textual asset."""
+
     id: str = Field(default_factory=lambda: str(uuid4()))
     content: str
     metadata: Dict[str, Any] = Field(default_factory=dict)
@@ -20,6 +21,7 @@ class Document(BaseModel):
 
 class Chunk(BaseModel):
     """Granular segment of a document used for vector/lexical indexing."""
+
     id: str = Field(default_factory=lambda: str(uuid4()))
     document_id: str
     content: str
@@ -29,6 +31,7 @@ class Chunk(BaseModel):
 
 class RetrievalSource(str, Enum):
     """Identifier for the retrieval method or pipeline stage."""
+
     LEXICAL = "lexical"
     DENSE = "dense"
     FUSION_RRF = "fusion_rrf"
@@ -38,6 +41,7 @@ class RetrievalSource(str, Enum):
 
 class RetrievalResult(BaseModel):
     """Scored candidate passage returned by a retrieval or reranking step."""
+
     chunk: Chunk
     score: float
     rank: int = 1
@@ -54,13 +58,15 @@ class RetrievalResult(BaseModel):
 
 class CRAGAction(str, Enum):
     """CRAG reflection decision actions."""
-    CORRECT = "correct"        # Evidence is sufficient & high confidence -> accept
-    AMBIGUOUS = "ambiguous"    # Evidence is partial or borderline -> rewrite & refine query
-    INCORRECT = "incorrect"    # Retrieval failed / irrelevant -> fallback / decompose query
+
+    CORRECT = "correct"  # Evidence is sufficient & high confidence -> accept
+    AMBIGUOUS = "ambiguous"  # Evidence is partial or borderline -> rewrite & refine query
+    INCORRECT = "incorrect"  # Retrieval failed / irrelevant -> fallback / decompose query
 
 
 class CRAGFeedback(BaseModel):
     """Diagnostic reflection output from the CRAG grading stage."""
+
     action: CRAGAction
     confidence_score: float = Field(ge=0.0, le=1.0)
     reasons: List[str] = Field(default_factory=list)
@@ -70,10 +76,10 @@ class CRAGFeedback(BaseModel):
 
 class EvaluationMetrics(BaseModel):
     """Standard Information Retrieval and Retrieval Evaluation metrics."""
+
     precision_at_k: float = 0.0
     recall_at_k: float = 0.0
     mrr: float = 0.0
     ndcg_at_k: float = 0.0
     hit_rate: float = 0.0
     k: int = 5
-

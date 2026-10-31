@@ -5,7 +5,7 @@ Corrective RAG (CRAG) Self-Reflective Retrieval Engine (`crag_retriever.crag`).
 from __future__ import annotations
 
 import re
-from typing import Callable, List, Optional, Set, Tuple
+from typing import Callable, List, Optional, Tuple
 
 from crag_retriever.dense import InMemoryDenseRetriever
 from crag_retriever.fusion import ReciprocalRankFusion
@@ -67,7 +67,7 @@ class HybridRetriever:
 class CorrectiveRetriever:
     """
     Corrective RAG (CRAG) Engine.
-    
+
     Evaluates retrieved evidence confidence and self-corrects:
     - High confidence (CORRECT) -> Accepts candidates.
     - Borderline (AMBIGUOUS) -> Rewrites query to focus on missing entities and re-retrieves.
@@ -186,13 +186,31 @@ class CorrectiveRetriever:
         for r in results:
             r.source = RetrievalSource.CRAG_REFINED
 
+        if feedback is None:
+            feedback = self.grade_evidence(current_query, results)
+
         return results, feedback, query_history
 
     def _extract_key_terms(self, text: str) -> List[str]:
         words = re.findall(r"\b[A-Za-z0-9_-]{3,}\b", text)
         stopwords = {
-            "what", "where", "which", "when", "how", "the", "and", "for", "with",
-            "that", "this", "from", "are", "can", "should", "does", "about",
+            "what",
+            "where",
+            "which",
+            "when",
+            "how",
+            "the",
+            "and",
+            "for",
+            "with",
+            "that",
+            "this",
+            "from",
+            "are",
+            "can",
+            "should",
+            "does",
+            "about",
         }
         return [w for w in words if w.lower() not in stopwords]
 
@@ -201,4 +219,3 @@ class CorrectiveRetriever:
             return query
         aspects_str = " ".join(missing_aspects[:3])
         return f"{query} {aspects_str}".strip()
-

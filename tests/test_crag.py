@@ -1,13 +1,18 @@
-import pytest
 from crag_retriever.crag import CorrectiveRetriever, HybridRetriever
-from crag_retriever.models import Chunk, CRAGAction
+from crag_retriever.models import Chunk
 
 
 def test_crag_retrieval_and_reflection():
     retriever = HybridRetriever()
     chunks = [
-        Chunk(document_id="doc-1", content="PostgreSQL supports ACID transactions and multi-version concurrency control MVCC."),
-        Chunk(document_id="doc-2", content="Redis is an in-memory key-value data structure store used as a database, cache, and message broker."),
+        Chunk(
+            document_id="doc-1",
+            content="PostgreSQL supports ACID transactions and multi-version concurrency control MVCC.",
+        ),
+        Chunk(
+            document_id="doc-2",
+            content="Redis is an in-memory key-value data structure store used as a database, cache, and message broker.",
+        ),
     ]
     retriever.index_chunks(chunks)
 
@@ -18,4 +23,3 @@ def test_crag_retrieval_and_reflection():
     assert feedback is not None
     assert feedback.confidence_score > 0.0
     assert len(history) >= 1
-

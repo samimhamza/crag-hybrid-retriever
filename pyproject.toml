@@ -73,3 +73,14 @@ target-version = "py310"
 select = ["E", "F", "W", "I"]
 ignore = ["E501"]
 
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "flashrank.*",
+    "rank_bm25.*",
+]
+ignore_missing_imports = true
+

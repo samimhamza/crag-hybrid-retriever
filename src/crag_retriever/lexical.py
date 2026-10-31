@@ -27,7 +27,7 @@ def default_tokenizer(text: str) -> List[str]:
 class BM25Retriever(BaseRetriever):
     """
     Lexical candidate retriever powered by Okapi BM25.
-    
+
     Supports custom tokenizers, dynamic corpus indexing, and score normalization.
     """
 
@@ -84,4 +84,3 @@ class BM25Retriever(BaseRetriever):
             rank += 1
 
         return results
-
