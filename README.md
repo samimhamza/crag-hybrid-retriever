@@ -71,7 +71,7 @@ flowchart TD
 This repository includes a deterministic `uv.lock` for lightning-fast virtual environment creation:
 
 ```bash
-git clone https://github.com/your-username/crag-hybrid-retriever.git
+git clone https://github.com/samimhamza/crag-hybrid-retriever.git
 cd crag-hybrid-retriever
 
 # Sync dependencies and create .venv in under 2 seconds
@@ -205,10 +205,10 @@ If you use `crag-hybrid-retriever` in your research or applications, please cite
 
 ```bibtex
 @software{crag_hybrid_retriever_2026,
-  author = {Your Name},
+  author = {Ahmad Samim Hamza},
   title = {crag-hybrid-retriever: Corrective RAG & Hybrid Retrieval Engine},
   year = {2026},
-  url = {https://github.com/your-username/crag-hybrid-retriever}
+  url = {https://github.com/samimhamza/crag-hybrid-retriever}
 }
 ```
 

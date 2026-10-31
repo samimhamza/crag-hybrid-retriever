@@ -10,8 +10,9 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-    { name = "AI & Software Engineering Portfolio" }
+    { name = "Ahmad Samim Hamza" }
 ]
+urls = { Repository = "https://github.com/samimhamza/crag-hybrid-retriever" }
 keywords = [
     "rag",
     "crag",
