@@ -37,27 +37,28 @@ Standard RAG architectures often suffer from two failure modes:
 
 ```mermaid
 flowchart TD
-    UserQuery([User Query]) --> Preprocess[Tokenize & Semantic Embed]
+    UserQuery(["User Query"]) --> Preprocess["Tokenize & Semantic Embed"]
     
     subgraph CandidateRetrieval["Dual-Track Candidate Retrieval"]
-        Preprocess -->|Tokens| BM25[BM25Okapi Lexical Index]
-        Preprocess -->|Vector| Dense[Dense Vector Index]
-        BM25 -->|Top-K Lexical| RawSparse[Sparse Candidates]
-        Dense -->|Top-K Dense| RawDense[Dense Candidates]
+        Preprocess -->|Tokens| BM25["BM25Okapi Lexical Index"]
+        Preprocess -->|Vector| Dense["Dense Vector Index"]
+        BM25 -->|Top-K Lexical| RawSparse["Sparse Candidates"]
+        Dense -->|Top-K Dense| RawDense["Dense Candidates"]
     end
 
     subgraph FusionLayer["Rank Fusion & Reranking"]
-        RawSparse & RawDense --> RRF[Reciprocal Rank Fusion (RRF k=60)]
-        RRF --> TopCandidates[Fused Candidates]
-        TopCandidates --> CrossEncoder[FlashRank Cross-Encoder]
+        RawSparse --> RRF["Reciprocal Rank Fusion (RRF, k=60)"]
+        RawDense --> RRF
+        RRF --> TopCandidates["Fused Candidates"]
+        TopCandidates --> CrossEncoder["FlashRank Cross-Encoder"]
     end
 
     subgraph CRAGLoop["CRAG Self-Reflection Engine"]
-        CrossEncoder --> Grader{Evidence Evaluator}
-        Grader -->|High Confidence| Accepted([Verified Output Passages])
-        Grader -->|Ambiguous / Missing Entities| QueryRewriter[Query Reformulator]
+        CrossEncoder --> Grader{"Evidence Evaluator"}
+        Grader -->|High Confidence| Accepted(["Verified Output Passages"])
+        Grader -->|Ambiguous / Missing Entities| QueryRewriter["Query Reformulator"]
         QueryRewriter -->|Refined Query| Preprocess
-        Grader -->|Low Confidence / Irrelevant| Fallback[Query Expansion / Broaden]
+        Grader -->|Low Confidence / Irrelevant| Fallback["Query Expansion / Broaden"]
         Fallback --> Preprocess
     end
 ```
