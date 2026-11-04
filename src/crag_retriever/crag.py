@@ -5,7 +5,7 @@ Corrective RAG (CRAG) Self-Reflective Retrieval Engine (`crag_retriever.crag`).
 from __future__ import annotations
 
 import re
-from typing import Callable, List, Optional, Tuple
+from collections.abc import Callable
 
 from crag_retriever.dense import InMemoryDenseRetriever
 from crag_retriever.fusion import ReciprocalRankFusion
@@ -27,9 +27,9 @@ class HybridRetriever:
 
     def __init__(
         self,
-        dense_retriever: Optional[InMemoryDenseRetriever] = None,
-        lexical_retriever: Optional[BM25Retriever] = None,
-        reranker: Optional[FlashRankReranker] = None,
+        dense_retriever: InMemoryDenseRetriever | None = None,
+        lexical_retriever: BM25Retriever | None = None,
+        reranker: FlashRankReranker | None = None,
         k_rrf: int = 60,
     ) -> None:
         self.dense = dense_retriever or InMemoryDenseRetriever()
@@ -37,7 +37,7 @@ class HybridRetriever:
         self.fusion = ReciprocalRankFusion(k_rrf=k_rrf)
         self.reranker = reranker or FlashRankReranker()
 
-    def index_chunks(self, chunks: List[Chunk]) -> None:
+    def index_chunks(self, chunks: list[Chunk]) -> None:
         """Index chunks across both sparse and dense indices."""
         self.dense.index_chunks(chunks)
         self.lexical.index_chunks(chunks)
@@ -49,7 +49,7 @@ class HybridRetriever:
         lexical_k: int = 15,
         fused_k: int = 10,
         final_k: int = 5,
-    ) -> List[RetrievalResult]:
+    ) -> list[RetrievalResult]:
         """
         Execute full two-stage hybrid retrieval:
         1. Retrieve top candidates from Dense & BM25 indices.
@@ -76,11 +76,11 @@ class CorrectiveRetriever:
 
     def __init__(
         self,
-        hybrid_retriever: Optional[HybridRetriever] = None,
+        hybrid_retriever: HybridRetriever | None = None,
         upper_threshold: float = 0.65,
         lower_threshold: float = 0.35,
         max_iterations: int = 3,
-        query_rewriter: Optional[Callable[[str, List[str]], str]] = None,
+        query_rewriter: Callable[[str, list[str]], str] | None = None,
     ) -> None:
         self.retriever = hybrid_retriever or HybridRetriever()
         self.upper_threshold = upper_threshold
@@ -88,14 +88,14 @@ class CorrectiveRetriever:
         self.max_iterations = max_iterations
         self.query_rewriter = query_rewriter or self._default_query_rewriter
 
-    def index_chunks(self, chunks: List[Chunk]) -> None:
+    def index_chunks(self, chunks: list[Chunk]) -> None:
         """Index corpus into the underlying hybrid retriever."""
         self.retriever.index_chunks(chunks)
 
     def grade_evidence(
         self,
         query: str,
-        results: List[RetrievalResult],
+        results: list[RetrievalResult],
     ) -> CRAGFeedback:
         """
         Self-reflective grading step.
@@ -153,7 +153,7 @@ class CorrectiveRetriever:
         self,
         query: str,
         top_k: int = 5,
-    ) -> Tuple[List[RetrievalResult], CRAGFeedback, List[str]]:
+    ) -> tuple[list[RetrievalResult], CRAGFeedback, list[str]]:
         """
         Execute the CRAG loop:
         1. Retrieve hybrid candidates.
@@ -162,9 +162,9 @@ class CorrectiveRetriever:
         4. Return final results, feedback diagnosis, and query transformation history.
         """
         current_query = query
-        query_history: List[str] = [current_query]
-        feedback: Optional[CRAGFeedback] = None
-        results: List[RetrievalResult] = []
+        query_history: list[str] = [current_query]
+        feedback: CRAGFeedback | None = None
+        results: list[RetrievalResult] = []
 
         for iteration in range(1, self.max_iterations + 1):
             results = self.retriever.search(current_query, final_k=top_k)
@@ -191,7 +191,7 @@ class CorrectiveRetriever:
 
         return results, feedback, query_history
 
-    def _extract_key_terms(self, text: str) -> List[str]:
+    def _extract_key_terms(self, text: str) -> list[str]:
         words = re.findall(r"\b[A-Za-z0-9_-]{3,}\b", text)
         stopwords = {
             "what",
@@ -214,7 +214,7 @@ class CorrectiveRetriever:
         }
         return [w for w in words if w.lower() not in stopwords]
 
-    def _default_query_rewriter(self, query: str, missing_aspects: List[str]) -> str:
+    def _default_query_rewriter(self, query: str, missing_aspects: list[str]) -> str:
         if not missing_aspects:
             return query
         aspects_str = " ".join(missing_aspects[:3])

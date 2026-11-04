@@ -4,8 +4,6 @@ Cross-Encoder Neural Reranking using FlashRank (`crag_retriever.rerank`).
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
-
 from crag_retriever.base import BaseReranker
 from crag_retriever.models import RetrievalResult, RetrievalSource
 
@@ -21,7 +19,7 @@ class FlashRankReranker(BaseReranker):
     def __init__(
         self,
         model_name: str = "ms-marco-MultiBERT-L-12",
-        cache_dir: Optional[str] = None,
+        cache_dir: str | None = None,
     ) -> None:
         self.model_name = model_name
         self.cache_dir = cache_dir
@@ -44,9 +42,9 @@ class FlashRankReranker(BaseReranker):
     def rerank(
         self,
         query: str,
-        candidates: List[RetrievalResult],
-        top_k: Optional[int] = None,
-    ) -> List[RetrievalResult]:
+        candidates: list[RetrievalResult],
+        top_k: int | None = None,
+    ) -> list[RetrievalResult]:
         """
         Rerank a candidate list using cross-encoder attention against the query.
         """
@@ -62,8 +60,8 @@ class FlashRankReranker(BaseReranker):
                 request = RerankRequest(query=query, passages=passages)
                 reranked_raw = ranker.rerank(request)
 
-                chunk_map: Dict[str, RetrievalResult] = {c.chunk.id: c for c in candidates}
-                reranked_results: List[RetrievalResult] = []
+                chunk_map: dict[str, RetrievalResult] = {c.chunk.id: c for c in candidates}
+                reranked_results: list[RetrievalResult] = []
 
                 for rank, item in enumerate(reranked_raw, start=1):
                     cid = item["id"]
@@ -90,11 +88,11 @@ class FlashRankReranker(BaseReranker):
     def _heuristic_fallback_rerank(
         self,
         query: str,
-        candidates: List[RetrievalResult],
-        top_k: Optional[int] = None,
-    ) -> List[RetrievalResult]:
+        candidates: list[RetrievalResult],
+        top_k: int | None = None,
+    ) -> list[RetrievalResult]:
         q_tokens = set(query.lower().split())
-        scored: List[RetrievalResult] = []
+        scored: list[RetrievalResult] = []
 
         for c in candidates:
             c_tokens = set(c.chunk.content.lower().split())

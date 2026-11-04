@@ -5,7 +5,7 @@ Dense Vector Retriever (`crag_retriever.dense`).
 from __future__ import annotations
 
 import hashlib
-from typing import Callable, List, Optional
+from collections.abc import Callable
 
 import numpy as np
 
@@ -45,24 +45,24 @@ class InMemoryDenseRetriever(BaseRetriever):
 
     def __init__(
         self,
-        embedder: Optional[Callable[[str], np.ndarray]] = None,
+        embedder: Callable[[str], np.ndarray] | None = None,
         dim: int = 128,
     ) -> None:
         self.dim = dim
         self.embedder = embedder or (
             lambda text: deterministic_semantic_embedder(text, dim=self.dim)
         )
-        self.chunks: List[Chunk] = []
-        self._matrix: Optional[np.ndarray] = None
+        self.chunks: list[Chunk] = []
+        self._matrix: np.ndarray | None = None
 
-    def index_chunks(self, chunks: List[Chunk]) -> None:
+    def index_chunks(self, chunks: list[Chunk]) -> None:
         """Embed and index chunks into a normalized NumPy matrix."""
         self.chunks = list(chunks)
         if not self.chunks:
             self._matrix = None
             return
 
-        embeddings: List[np.ndarray] = []
+        embeddings: list[np.ndarray] = []
         for c in self.chunks:
             vec = self.embedder(c.content)
             norm = np.linalg.norm(vec)
@@ -72,7 +72,7 @@ class InMemoryDenseRetriever(BaseRetriever):
 
         self._matrix = np.vstack(embeddings).astype(np.float32)
 
-    def retrieve(self, query: str, top_k: int = 10) -> List[RetrievalResult]:
+    def retrieve(self, query: str, top_k: int = 10) -> list[RetrievalResult]:
         """
         Compute cosine similarity between the query vector and indexed chunk vectors.
         """
@@ -88,7 +88,7 @@ class InMemoryDenseRetriever(BaseRetriever):
         scores = np.dot(self._matrix, q_vec)
         top_indices = np.argsort(scores)[::-1][:top_k]
 
-        results: List[RetrievalResult] = []
+        results: list[RetrievalResult] = []
         for rank, idx in enumerate(top_indices, start=1):
             score = float(scores[idx])
             results.append(

@@ -5,7 +5,6 @@ Evaluation Metrics & Retrieval Grading Suite (`crag_retriever.evaluator`).
 from __future__ import annotations
 
 import math
-from typing import List, Set
 
 from crag_retriever.models import EvaluationMetrics, RetrievalResult
 
@@ -17,7 +16,7 @@ class RetrievalEvaluator:
     """
 
     @staticmethod
-    def precision_at_k(retrieved_ids: List[str], ground_truth_ids: Set[str], k: int) -> float:
+    def precision_at_k(retrieved_ids: list[str], ground_truth_ids: set[str], k: int) -> float:
         """Calculate Precision at rank K."""
         if k <= 0 or not retrieved_ids:
             return 0.0
@@ -26,7 +25,7 @@ class RetrievalEvaluator:
         return hits / float(k)
 
     @staticmethod
-    def recall_at_k(retrieved_ids: List[str], ground_truth_ids: Set[str], k: int) -> float:
+    def recall_at_k(retrieved_ids: list[str], ground_truth_ids: set[str], k: int) -> float:
         """Calculate Recall at rank K."""
         if not ground_truth_ids:
             return 0.0
@@ -35,7 +34,7 @@ class RetrievalEvaluator:
         return hits / float(len(ground_truth_ids))
 
     @staticmethod
-    def mean_reciprocal_rank(retrieved_ids: List[str], ground_truth_ids: Set[str]) -> float:
+    def mean_reciprocal_rank(retrieved_ids: list[str], ground_truth_ids: set[str]) -> float:
         """Calculate Reciprocal Rank (RR) for a single query."""
         for rank, cid in enumerate(retrieved_ids, start=1):
             if cid in ground_truth_ids:
@@ -43,7 +42,7 @@ class RetrievalEvaluator:
         return 0.0
 
     @staticmethod
-    def ndcg_at_k(retrieved_ids: List[str], ground_truth_ids: Set[str], k: int) -> float:
+    def ndcg_at_k(retrieved_ids: list[str], ground_truth_ids: set[str], k: int) -> float:
         """Calculate Normalized Discounted Cumulative Gain at rank K with binary relevance."""
         if k <= 0 or not retrieved_ids or not ground_truth_ids:
             return 0.0
@@ -65,8 +64,8 @@ class RetrievalEvaluator:
     @classmethod
     def evaluate(
         cls,
-        results: List[RetrievalResult],
-        ground_truth_ids: Set[str],
+        results: list[RetrievalResult],
+        ground_truth_ids: set[str],
         k: int = 5,
     ) -> EvaluationMetrics:
         """

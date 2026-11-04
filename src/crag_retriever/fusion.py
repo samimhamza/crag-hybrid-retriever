@@ -4,18 +4,16 @@ Reciprocal Rank Fusion (RRF) & Hybrid Candidate Fusion (`crag_retriever.fusion`)
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
-
 from crag_retriever.models import Chunk, RetrievalResult, RetrievalSource
 
 DEFAULT_RRF_K = 60
 
 
 def reciprocal_rank_fusion(
-    ranked_lists: List[List[RetrievalResult]],
+    ranked_lists: list[list[RetrievalResult]],
     k_rrf: int = DEFAULT_RRF_K,
-    top_k: Optional[int] = None,
-) -> List[RetrievalResult]:
+    top_k: int | None = None,
+) -> list[RetrievalResult]:
     """
     Fuse multiple ranked candidate lists using standard Reciprocal Rank Fusion (RRF):
         RRF_Score(d) = sum_{l in ranked_lists} ( 1.0 / (k_rrf + rank_l(d)) )
@@ -30,8 +28,8 @@ def reciprocal_rank_fusion(
     Returns:
         Sorted list of RetrievalResult objects with fused RRF scores.
     """
-    chunk_lookup: Dict[str, Chunk] = {}
-    fused_scores: Dict[str, float] = {}
+    chunk_lookup: dict[str, Chunk] = {}
+    fused_scores: dict[str, float] = {}
 
     for candidate_list in ranked_lists:
         for rank_idx, item in enumerate(candidate_list, start=1):
@@ -44,7 +42,7 @@ def reciprocal_rank_fusion(
     if top_k is not None:
         sorted_items = sorted_items[:top_k]
 
-    results: List[RetrievalResult] = []
+    results: list[RetrievalResult] = []
     for rank, (cid, score) in enumerate(sorted_items, start=1):
         results.append(
             RetrievalResult(
@@ -68,9 +66,9 @@ class ReciprocalRankFusion:
 
     def fuse(
         self,
-        ranked_lists: List[List[RetrievalResult]],
-        top_k: Optional[int] = None,
-    ) -> List[RetrievalResult]:
+        ranked_lists: list[list[RetrievalResult]],
+        top_k: int | None = None,
+    ) -> list[RetrievalResult]:
         return reciprocal_rank_fusion(
             ranked_lists=ranked_lists,
             k_rrf=self.k_rrf,

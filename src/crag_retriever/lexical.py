@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from typing import Callable, List, Optional
+from collections.abc import Callable
 
 from rank_bm25 import BM25Okapi
 
@@ -14,7 +14,7 @@ from crag_retriever.base import BaseRetriever
 from crag_retriever.models import Chunk, RetrievalResult, RetrievalSource
 
 
-def default_tokenizer(text: str) -> List[str]:
+def default_tokenizer(text: str) -> list[str]:
     """
     Standard whitespace & punctuation tokenizer with Unicode NFKD normalization.
     Preserves alphanumeric words, hyphens, and numeric thresholds.
@@ -33,17 +33,17 @@ class BM25Retriever(BaseRetriever):
 
     def __init__(
         self,
-        tokenizer: Optional[Callable[[str], List[str]]] = None,
+        tokenizer: Callable[[str], list[str]] | None = None,
         k1: float = 1.5,
         b: float = 0.75,
     ) -> None:
         self.tokenizer = tokenizer or default_tokenizer
         self.k1 = k1
         self.b = b
-        self.chunks: List[Chunk] = []
-        self._bm25: Optional[BM25Okapi] = None
+        self.chunks: list[Chunk] = []
+        self._bm25: BM25Okapi | None = None
 
-    def index_chunks(self, chunks: List[Chunk]) -> None:
+    def index_chunks(self, chunks: list[Chunk]) -> None:
         """Build the BM25 index over the provided chunks."""
         self.chunks = list(chunks)
         if not self.chunks:
@@ -53,7 +53,7 @@ class BM25Retriever(BaseRetriever):
         tokenized_corpus = [self.tokenizer(c.content) for c in self.chunks]
         self._bm25 = BM25Okapi(tokenized_corpus, k1=self.k1, b=self.b)
 
-    def retrieve(self, query: str, top_k: int = 10) -> List[RetrievalResult]:
+    def retrieve(self, query: str, top_k: int = 10) -> list[RetrievalResult]:
         """
         Query the BM25 index and return the Top-k scoring chunks.
         """
@@ -67,7 +67,7 @@ class BM25Retriever(BaseRetriever):
         scores = self._bm25.get_scores(tokens)
         top_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:top_k]
 
-        results: List[RetrievalResult] = []
+        results: list[RetrievalResult] = []
         rank = 1
         for idx in top_indices:
             score = float(scores[idx])

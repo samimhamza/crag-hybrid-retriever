@@ -5,7 +5,7 @@ Core Data Models for CRAG & Hybrid Retrieval (`crag_retriever.models`).
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -16,7 +16,7 @@ class Document(BaseModel):
 
     id: str = Field(default_factory=lambda: str(uuid4()))
     content: str
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class Chunk(BaseModel):
@@ -25,7 +25,7 @@ class Chunk(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     document_id: str
     content: str
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     index_in_doc: int = 0
 
 
@@ -69,9 +69,9 @@ class CRAGFeedback(BaseModel):
 
     action: CRAGAction
     confidence_score: float = Field(ge=0.0, le=1.0)
-    reasons: List[str] = Field(default_factory=list)
-    suggested_reformulations: List[str] = Field(default_factory=list)
-    missing_key_aspects: List[str] = Field(default_factory=list)
+    reasons: list[str] = Field(default_factory=list)
+    suggested_reformulations: list[str] = Field(default_factory=list)
+    missing_key_aspects: list[str] = Field(default_factory=list)
 
 
 class EvaluationMetrics(BaseModel):
